@@ -86,4 +86,23 @@
   - `db.test.find(
 {gender: "Female", age: {$nin: [23, 26]}} //field find and comperison operator
   )`
-  - `$in` operator এর মাধ্যমে field এর যে value গুলো দেয়া হবে সেগুলো বাদে বাকি গুলোর ডাটা পাওয়া যাবে।
+  - `$nin` operator এর মাধ্যমে field এর যে value গুলো দেয়া হবে সেগুলো বাদে বাকি গুলোর ডাটা পাওয়া যাবে।
+
+### Logical Query Operator
+
+- operator and -> `$and`
+
+  - `db.test.find({$and: [
+{age: {$lt: 30}},
+{age: {$gt: 18}},
+{gender: "Male"}
+]})`
+  - `$and` operator হলো explicit, logical `$and` এর মাধ্যমে ‍ specific field(property) multiple ভাবে define করা যায়। যা এই operator ছাড়া করা যায় না।
+
+- Operator or -> `$or`
+  - `db.test.find({$or: [
+{'skills.name': "JAVASCRIPT"},
+{"skills.name": "PYTHON"}, 
+{"skills.level": "Intermidiate"}
+]})`
+  - logical `$or` এর মাধ্যমে ‍ specific field(property) multiple ভাবে define করা যায়। তবে একই কাজ `$in` operator দিয়েও করা যায়।
