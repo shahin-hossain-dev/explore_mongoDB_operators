@@ -100,9 +100,33 @@
   - `$and` operator হলো explicit, logical `$and` এর মাধ্যমে ‍ specific field(property) multiple ভাবে define করা যায়। যা এই operator ছাড়া করা যায় না।
 
 - Operator or -> `$or`
+
   - `db.test.find({$or: [
 {'skills.name': "JAVASCRIPT"},
 {"skills.name": "PYTHON"}, 
 {"skills.level": "Intermidiate"}
 ]})`
   - logical `$or` এর মাধ্যমে ‍ specific field(property) multiple ভাবে define করা যায়। তবে একই কাজ `$in` operator দিয়েও করা যায়।
+
+- operator not -> `$not`
+  - `db.test.find({age: {$not: {$eq: 30}}})`
+  - `$not` এর সাথে সবসময় অন্য query add করে কাজ করতে হয়, এটি একা একা কাজ করতে পারে না।
+  - `$not` query করার সময় document এ যদি field নাও থাকে তাহলে বা `null` থাকে ঐ document ও পাবে।
+
+### Element Query Operators
+
+- Operator -> `$exists`
+
+- `db.test.find({company: {$exists: true}})`
+
+  - `$exists` operator boolean use করে document এর property যদি exist থাকে তাহলে ঐ document গুলো পাওয়া যাবে অথবা যাবে না, কিন্তু এই property value এর উপর depend করে না। property আছে কিনা সেটা চেক করে data provide করে।
+
+- Operator -> `$type`
+  - `db.test.find({age: {$type: "string"}})`
+  - `$type` operator use করে একটি নির্দিষ্ট type এর data পাওয়ার জন্য ব্যবহার করা হয়।
+
+### Array Query Operators
+
+- Oprator -> `$size`
+- `db.test.find({friends: {$size: 4}}).projection({friends: 1})`
+- কোনো field থেকে নির্দিষ্ট array size এর ‍elements গুলো পেতে এই opartor use করা হয়।
