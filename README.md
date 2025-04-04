@@ -136,3 +136,42 @@
 - Operator -> `$elemMatch`
   - `db.test.find({skills: {$elemMatch: {name: "JAVASCRIPT", level: "Expert"}}})`
   - Object এর মধ্যে নির্দিষ্ট field এর value অনুযায়ী all data পাওয়ার জন্য `$elemMatch` operator.
+
+### Upadate Operator
+
+- operator -> `$set`
+  - `db.test.updateOne(
+{_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$set: {
+    age: 20
+}}
+)`
+  - `$set` operator দিয়ে field এ নতুন value দিয়ে field value update করা হয়। `$set` এর মাধ্যম্যে পূর্বের value replace হয়ে নতুন value add হবে।
+- Operator `$addToSet`
+
+  - `db.test.updateOne(
+{_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$addToSet: {
+    languages: 'Bangla'
+}}
+)`
+  - `addToSet` Operator use করে array document update করে, array কে replace না করে নতুন করে element যুক্ত করে, element exist হলে document update করে না।
+
+- Operator -> `$each`
+
+  - `db.test.updateOne(
+{_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$addToSet: {
+    languages: {$each: ['English', "Latin"]}
+}}
+)`
+  - Array এর মধ্যে multiple element set করার জন্য `$each` operator use করতে হয়।
+
+- Operator -> `$push`
+  - `db.test.updateOne(
+{_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$push: {
+    languages: {$each: ['English', "Latin"]}
+}}
+)`
+  - Array এর duplicate element add করতে হলে `$push` operator use করতে হবে। ফলে element exist করুক না করুক element add করে দিবে।
