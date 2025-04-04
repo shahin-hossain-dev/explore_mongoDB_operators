@@ -128,5 +128,11 @@
 ### Array Query Operators
 
 - Oprator -> `$size`
-- `db.test.find({friends: {$size: 4}}).projection({friends: 1})`
-- কোনো field থেকে নির্দিষ্ট array size এর ‍elements গুলো পেতে এই opartor use করা হয়।
+  - `db.test.find({friends: {$size: 4}}).projection({friends: 1})`
+  - কোনো field থেকে নির্দিষ্ট array size এর ‍elements গুলো পেতে এই opartor use করা হয়।
+- Operator -> `$all`
+  - `db.test.find({interests: {$all: ["Cooking", "Writing", "Reading"]}})`
+  - Array এর মধ্যে নির্দিষ্ট field এর value অনুযায়ী all data পাওয়ার জন্য `$all` operator.
+- Operator -> `$elemMatch`
+  - `db.test.find({skills: {$elemMatch: {name: "JAVASCRIPT", level: "Expert"}}})`
+  - Object এর মধ্যে নির্দিষ্ট field এর value অনুযায়ী all data পাওয়ার জন্য `$elemMatch` operator.
