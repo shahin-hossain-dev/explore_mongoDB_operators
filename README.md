@@ -168,6 +168,7 @@
   - Array এর মধ্যে multiple element set করার জন্য `$each` operator use করতে হয়।
 
 - Operator -> `$push`
+
   - `db.test.updateOne(
 {_id: ObjectId("6406ad63fc13ae5a40000065")},
 {$push: {
@@ -175,3 +176,35 @@
 }}
 )`
   - Array এর duplicate element add করতে হলে `$push` operator use করতে হবে। ফলে element exist করুক না করুক element add করে দিবে।
+  -
+
+- Operator -> `$unset`
+
+  - `db.test.updateOne(
+{_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$unset: {age: ''}}
+)`
+  - কোনো field কে remove করে দেওয়ার জন্য `$unset` operator use করা হয়।
+
+- Operator -> `$pop`
+
+  - `db.test.updateOne(
+ {_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$pop: {languages: -1}}
+ )`
+  - array field এর প্রথম অথবা শেষ element কে remove করা জন্য `$pop` operator use করা হয়। প্রথম element হলে -1, শেষ element হলে 1.
+
+- Operator -> `$pull`
+
+  - `db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065")},
+{$pull: {languages:"English"}}
+  )`
+  - array field থেকে specific একটা element কে remove করতে চাইলে `pull` operator ব্যবহার করতে হবে।
+
+- Operator -> `$pullAll`
+  - db.test.updateOne(
+    {\_id: ObjectId("6406ad63fc13ae5a40000065")},
+    {$pullAll: {languages: ["Latin", "Thai"]}}
+    )
+  - array field থেকে multiple element remove করতে চাইলে `$pullAll` operator use করতে হবে।
