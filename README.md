@@ -140,6 +140,7 @@
 ### Upadate Operator
 
 - operator -> `$set`
+
   - `db.test.updateOne(
 {_id: ObjectId("6406ad63fc13ae5a40000065")},
 {$set: {
@@ -147,6 +148,13 @@
 }}
 )`
   - `$set` operator দিয়ে field এ নতুন value দিয়ে field value update করা হয়। `$set` এর মাধ্যম্যে পূর্বের value replace হয়ে নতুন value add হবে।
+  - `$set` operator দিয়ে array of object এর specific object ধরে update করা যায়।
+  - `db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065"), 'education.major': "Art"},
+{$set: {"education.$.major": 'CSE'}}
+  )`
+  - এখানে id দিয়ে specifici element select করে, `'education.major': "Art"` দিয়ে specific object কে ধরে, `$set` operator use করে, `{"education.$.major": 'CSE'}` এভাবে field ধরে update করতে হবে। .$. হলো position operator.
+
 - Operator `$addToSet`
 
   - `db.test.updateOne(
