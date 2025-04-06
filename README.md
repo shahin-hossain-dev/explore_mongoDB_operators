@@ -216,3 +216,20 @@
     {$pullAll: {languages: ["Latin", "Thai"]}}
     )
   - array field থেকে multiple element remove করতে চাইলে `$pullAll` operator use করতে হবে।
+
+## Aggrigation Pipeline Operator
+
+- Operator -> `$match`
+
+  - `db.test.aggregate([
+{$match: {age: {$gte: 30}, gender: "Male"}}, 
+{$project: {age: 1, gender: 1, name: 1, }}
+])`
+  - `$match` operator হলো find operator এর মতো। কিন্তু $match stage আকারে কাজ করে।
+
+- Operator -> `$project`
+  - `db.test.aggregate([
+{$match: {age: {$gte: 30}, gender: "Male"}}, 
+{$project: {age: 1, gender: 1, name: 1, }}
+])`
+  - `$project` operator project method এর মতো কাজ করে কিন্তু aggregation এর মধ্যে এটি stage আকারে কাজ করে।
