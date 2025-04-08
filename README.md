@@ -228,8 +228,31 @@
   - `$match` operator হলো find operator এর মতো। কিন্তু $match stage আকারে কাজ করে।
 
 - Operator -> `$project`
+
   - `db.test.aggregate([
 {$match: {age: {$gte: 30}, gender: "Male"}}, 
 {$project: {age: 1, gender: 1, name: 1, }}
 ])`
   - `$project` operator project method এর মতো কাজ করে কিন্তু aggregation এর মধ্যে এটি stage আকারে কাজ করে।
+
+- Operator -> `$addField`
+
+  - `db.test.aggregate([
+{$addFields: {course: "Level 2"}},
+])`
+  - এই operator use করে pipeline এর প্রতিটা data এর মধ্যে field add করা যায়। কিন্তু শুধু `$addField` দিয়ে collection এর মধ্যে data কে modifiy করা যায় না। এটা শুধু pipleline এর data এর মধ্যে field add হবে। যদি collection এর মধ্যে data কে modify করতে হয়। তাহলে `$marge` operator use করতে হবে। এবং pipeline এর data গুলো দিয়ে আলাদা collection তৈরী করতে হয় তাহলে `$out` operator use করতে হবে।
+
+- Operator -> `$merge`
+
+  - `db.test.aggregate([
+{$addFields: {course: "Level 2"}},
+{$merge: "test"}
+])`
+  - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$merge` operator use করে, test collection এর সাথে pipeline এর data merge করে দেয়া হয়েছে।
+
+- Operator -> `$out`
+  - `db.test.aggregate([
+{$addFields: {course: "Level 2"}},
+{$out: "pipeline_collection"}
+])`
+  - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$out` operator দিয়ে new collection তৈরী হয়ে যাবে।
