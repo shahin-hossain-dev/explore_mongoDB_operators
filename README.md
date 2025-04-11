@@ -251,8 +251,29 @@
   - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$merge` operator use করে, test collection এর সাথে pipeline এর data merge করে দেয়া হয়েছে।
 
 - Operator -> `$out`
+
   - `db.test.aggregate([
 {$addFields: {course: "Level 2"}},
 {$out: "pipeline_collection"}
 ])`
   - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$out` operator দিয়ে new collection তৈরী হয়ে যাবে।
+
+- Operator -> `$group`
+  - `db.test.aggregate([
+
+{ $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}},
+
+    ])`
+
+- `$group` operator stage তৈরী করে all document এর মধ্যে group করা যায়। `_id` দিয়ে একটি field declare করতে হবে, ঐ id এর উপর ভিত্তি করে documnet গুলো group হয়ে যাবে।
+- `$group` operator এর মধ্যে কিছু accoumulator operator use করা হয় যেমন: `$sum`, `$count`, `$push`,
+
+  - `$sum` দিয়ে প্রতিটা group এ কত গুলো data আছে তা যোগ করে count করা যায়।
+  - `$push` operator দিয়ে group এ কোন field show করবে তা push করা যায়। `{$push: '$$ROOT'}` group wise সকল data গুলো ‍show করবে। কিন্তু নির্দিষ্ট কিছু field show করাতে হলে `$project` stage use করতে হবে।
+
+- Operator -> `$project`
+  - `db.test.aggregate([
+{ $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}}, 
+ {$project: {'users.name': 1, 'users.age': 1, 'users.gender':1}}
+    ])`
+  - এখানে country group এর users এর data গুলোর মধ্যে ‍ specific ৩টা field এর data show করবে।
