@@ -261,10 +261,13 @@
 - Operator -> `$group`
 
   - `db.test.aggregate([
-
-  { $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}},
-
-                                            ])`
+{ $group: 
+{ _id: "$address.country", 
+count: {$sum: 1}, 
+users: {$push: '$$ROOT'}
+}
+},
+])`
 
   - `$group` operator stage তৈরী করে all document এর মধ্যে group করা যায়। `_id` দিয়ে একটি field declare করতে হবে, ঐ id এর উপর ভিত্তি করে documnet গুলো group হয়ে যাবে।
   - `$group` operator এর মধ্যে কিছু accoumulator operator use করা হয় যেমন: `$sum`, `$count`, `$push`,
@@ -297,39 +300,81 @@
  {$project: {'users.name': 1, 'users.age': 1, 'users.gender':1}}
     ])`
   - এখানে country group এর users এর data গুলোর মধ্যে ‍ specific ৩টা field এর data show করবে।
-  - `db.test.aggregate([
+  -
 
+```
+  db.test.aggregate([
     {$group: {
-        _id: null, 
-        totalSalary: {$sum: '$salary'}, 
+        _id: null,
+        totalSalary: {$sum: '$salary'},
         minSalary: {$min: "$salary"},
         maxSalary: {$max: "$salary"},
         avgSalary: {$avg: "$salary"}
     }},
     {$project: {
     total: "$totalSalary",
-        minSalary: 1, 
+        minSalary: 1,
         max: "$maxSalary",
     avgerage: "$avgSalary",
         differenceMinMax: {$subtract: ["$maxSalary", "$minSalary"]}
     }},
-    ])`
+    ])
+```
 
     - `$project` operator এর আরেকটি ব্যবহার হলো new field দিয়ে আগের field এ `$fieldName` ব্যবহার করে declare করতে হয়। তাহলে পূর্বের value new field এ বসে যাবে।
     - `$substract` use করে একটি field থেকে আরেকটি field কে বিয়োর করা হয়েছে।
 
 - Operator -> `$unwind`
 
-  - `db.test.aggregate([
-{ $unwind: "$friends" },
-{ $group: { _id: "$friends", count: {$sum: 1} } }
-])`
+  - db.test.aggregate([
+    { $unwind: "$friends" },
+    { $group: { _id: "$friends", count: {$sum: 1} } }
+    ])`
 
   - `$unwind` operator use করে array এর প্রতিটি element কে single element এ রুপান্তর করা হয়। প্রতিটা element নিয়ে আলাদা আলাদা object create হয়।
-  - যেমন: `[{id: 1, friend: [a,b,c]}]` -> `[{id: 1, friend: 1}, {id: 1, friend: b}, {id: 1, friend:c}]`
+  - যেমন: `[{id: 1, friend: [a,b,c]}]` -> `[{id: 1, friend: a}, {id: 1, friend: b}, {id: 1, friend:c}]`
   - এখন group করতে চাইলে ‍single element এর উপর group করা যাবে।
   - `db.test.aggregate([
     {$unwind: '$interests'},
    {$group: {_id: "$age", interest: {$push: "$interests"}}}
 ])`
   - এখানে interests array field কে break করে single elemet এ রুপান্তর করা হয়েছে এবং age এর উপর ভিত্তি করে group করে, প্রতিটি age এর interest গুলো `$push` operator দিয়ে add করে দেয়া হয়েছে।
+
+- Operator -> `$bucket`
+
+  ```
+  db.test.aggregate([
+      //stage 1
+    {$bucket: {
+        groupBy: "$age",
+        boundaries: [0, 10, 20, 30, 40, 50],
+        default: 'remaining',
+        output: {
+            count: {$sum: 1},
+            users: {$push: '$$ROOT'}
+        }
+    }},
+
+    //stage 2
+    {$sort: {count: -1}},
+
+    //stage 3
+    {$limit:2},
+
+    //stage 4
+    {$project: {"count": 1}}
+  ])
+  ```
+
+  - `$bucket` operator দিয়ে collection এর মধ্যে নির্দিষ্ট field এর উপর boundary set করে বিভিন্ন ভাগে ভাগ করে document পাওয়া যায়। `$bucket` use করতে কিছু শর্ত পূরণ করতে হবে।
+    - groupBy: `$bucket` এর মধ্যে `groupBy` property use করতে হবে। এর মাধ্যমে কোন field এর ভিত্তি করে oparation হবে তা ঠিক করে দেয়।
+    - boundaries: `boundaries` property use করতে হবে। কত থেকে কত এর মধ্যে boundary হবে। এখানে [0, 10] = 0 < 10 পযন্ত 0 boundary এর মধ্যে, বাকি গুলো এমন পযায়ক্রমে হবে।
+    - default: `default` হলো boundary set করার পরে বাকি যেগুলো থাকবে তা deafult এর মধ্যে set হবে।
+    - output: `output` এ define করতে হবে যে কোন field গুলো show করাতে হবে।
+
+- Operator -> `$sort`
+
+  - `$sort` stage এ field এর উপর ভিত্তি করে sort করা যায়।
+
+- Operator -> `$limit`
+  - `$limit` stage এ document গুলোকে limit করে পাওয়া যায়। এবং সব সময় `$sort` stage এর পরে করতে হবে।
