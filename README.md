@@ -59,7 +59,10 @@
 
 - sort -> `.sort()`
 
-  - `db.test.find({age: {$gte: 21}}).sort({age: 1})
+  ```
+  db.test.find({age: {$gte: 21}}).sort({age: 1})
+  ```
+
   - এখানে chaining করে age property এর উপর ভিত্তি করে sort করা হয়েছে, যদি ascending প্রয়োজন হয় তাহলে value 1 এবং যদি descending প্রয়োজন হয় তাহলে -1 দিতে হবে।
 
 - implicit and -> `{age: {$gt: 18, $lt: 30}}`
@@ -68,48 +71,68 @@
 
 - multi filed data get:
 
-  - `db.test.find({gender: "Female", age: { $gt: 17, $lt:30}}, {age: 1, gender: 1}).sort({age: 1})`
+  ```
+  db.test.find(
+    {gender: "Female", age: { $gt: 17, $lt:30}},
+    {age: 1, gender: 1}).sort({age: 1})
+  ```
+
   - এখানে multiple filed যুক্ত করা হয়েছে, যাদের gender Female and যাদের ‍ age 17 থেকে বড় এবং 30 থেকে ছোট হবে।, `{age:1, gender: 1}` শুধু এই দুই field এর data গুলো আসবে।
 
 - operator in -> `$in`
 
-  - `db.test.find(
+  ```
+  db.test.find(
     {
     gender: "Female",
     age: {$in: [23, 26, 30, 18, 22]},
     interests: {$in: ["Gaming", "Cooking"]}
     }, [field find and comparison operator]
-)`
+  )
+  ```
+
   - `$in` operator এর মাধ্যমে field এর যে যে value গুলো ‍array এর দিবে শুধু সেগুলোর ডাটা পাওয়া যাবে।
 
 - operator not in -> `$nin`
-  - `db.test.find(
-{gender: "Female", age: {$nin: [23, 26]}} //field find and comperison operator
-  )`
+
+  ```
+  db.test.find(
+  {gender: "Female", age: {$nin: [23, 26]}} //field find and comperison operator
+    )
+  ```
+
   - `$nin` operator এর মাধ্যমে field এর যে value গুলো দেয়া হবে সেগুলো বাদে বাকি গুলোর ডাটা পাওয়া যাবে।
 
 ### Logical Query Operator
 
 - operator and -> `$and`
 
-  - `db.test.find({$and: [
-{age: {$lt: 30}},
-{age: {$gt: 18}},
-{gender: "Male"}
-]})`
+  ```
+    db.test.find({$and: [
+  {age: {$lt: 30}},
+  {age: {$gt: 18}},
+  {gender: "Male"}
+  ]})
+  ```
+
   - `$and` operator হলো explicit, logical `$and` এর মাধ্যমে ‍ specific field(property) multiple ভাবে define করা যায়। যা এই operator ছাড়া করা যায় না।
 
 - Operator or -> `$or`
 
-  - `db.test.find({$or: [
-{'skills.name': "JAVASCRIPT"},
-{"skills.name": "PYTHON"}, 
-{"skills.level": "Intermidiate"}
-]})`
+  ```
+  db.test.find({$or: [
+  {'skills.name': "JAVASCRIPT"},
+  {"skills.name": "PYTHON"},
+  {"skills.level": "Intermidiate"}
+  ]})
+  ```
+
   - logical `$or` এর মাধ্যমে ‍ specific field(property) multiple ভাবে define করা যায়। তবে একই কাজ `$in` operator দিয়েও করা যায়।
 
 - operator not -> `$not`
-  - `db.test.find({age: {$not: {$eq: 30}}})`
+  ```
+  db.test.find({age: {$not: {$eq: 30}}})
+  ```
   - `$not` এর সাথে সবসময় অন্য query add করে কাজ করতে হয়, এটি একা একা কাজ করতে পারে না।
   - `$not` query করার সময় document এ যদি field নাও থাকে তাহলে বা `null` থাকে ঐ document ও পাবে।
 
@@ -117,157 +140,226 @@
 
 - Operator -> `$exists`
 
-- `db.test.find({company: {$exists: true}})`
+  ```
+  db.test.find({company: {$exists: true}})
+  ```
 
   - `$exists` operator boolean use করে document এর property যদি exist থাকে তাহলে ঐ document গুলো পাওয়া যাবে অথবা যাবে না, কিন্তু এই property value এর উপর depend করে না। property আছে কিনা সেটা চেক করে data provide করে।
 
 - Operator -> `$type`
-  - `db.test.find({age: {$type: "string"}})`
+
+  -
+
+  ```
+  db.test.find({age: {$type: "string"}})
+  ```
+
   - `$type` operator use করে একটি নির্দিষ্ট type এর data পাওয়ার জন্য ব্যবহার করা হয়।
 
 ### Array Query Operators
 
 - Oprator -> `$size`
-  - `db.test.find({friends: {$size: 4}}).projection({friends: 1})`
+
+  ```
+  db.test.find(
+    {friends: {$size: 4}}).projection({friends: 1}
+  )
+  ```
+
   - কোনো field থেকে নির্দিষ্ট array size এর ‍elements গুলো পেতে এই opartor use করা হয়।
+
 - Operator -> `$all`
-  - `db.test.find({interests: {$all: ["Cooking", "Writing", "Reading"]}})`
+
+  ```
+  db.test.find(
+    {interests: {$all: ["Cooking", "Writing", "Reading"]}}
+  )
+  ```
+
   - Array এর মধ্যে নির্দিষ্ট field এর value অনুযায়ী all data পাওয়ার জন্য `$all` operator.
+
 - Operator -> `$elemMatch`
-  - `db.test.find({skills: {$elemMatch: {name: "JAVASCRIPT", level: "Expert"}}})`
+
+  ```
+  db.test.find(
+    {skills:
+      {$elemMatch: {name: "JAVASCRIPT", level: "Expert"}}
+    }
+  )
+  ```
+
   - Object এর মধ্যে নির্দিষ্ট field এর value অনুযায়ী all data পাওয়ার জন্য `$elemMatch` operator.
 
 ### Upadate Operator
 
 - operator -> `$set`
 
-  - `db.test.updateOne(
-{_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$set: {
-    age: 20
-}}
-)`
+  ```
+  db.test.updateOne(
+    {_id: ObjectId("6406ad63fc13ae5a40000065")},
+    {$set: {
+        age: 20
+    }}
+  )
+  ```
+
   - `$set` operator দিয়ে field এ নতুন value দিয়ে field value update করা হয়। `$set` এর মাধ্যম্যে পূর্বের value replace হয়ে নতুন value add হবে।
   - `$set` operator দিয়ে array of object এর specific object ধরে update করা যায়।
-  - `db.test.updateOne(
-  {_id: ObjectId("6406ad63fc13ae5a40000065"), 'education.major': "Art"},
-{$set: {"education.$.major": 'CSE'}}
-  )`
+
+  ```
+  db.test.updateOne(
+    {_id: ObjectId("6406ad63fc13ae5a40000065"), 'education.major': "Art"},
+    {$set: {"education.$.major": 'CSE'}}
+  )
+  ```
+
   - এখানে id দিয়ে specifici element select করে, `'education.major': "Art"` দিয়ে specific object কে ধরে, `$set` operator use করে, `{"education.$.major": 'CSE'}` এভাবে field ধরে update করতে হবে। .$. হলো position operator.
 
 - Operator `$addToSet`
 
-  - `db.test.updateOne(
-{_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$addToSet: {
-    languages: 'Bangla'
-}}
-)`
+  ```db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065")},
+  {$addToSet: {
+      languages: 'Bangla'
+  }}
+  )
+  ```
+
   - `addToSet` Operator use করে array document update করে, array কে replace না করে নতুন করে element যুক্ত করে, element exist হলে document update করে না।
 
 - Operator -> `$each`
 
-  - `db.test.updateOne(
-{_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$addToSet: {
-    languages: {$each: ['English', "Latin"]}
-}}
-)`
+  ```
+  db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065")},
+  {$addToSet: {
+      languages: {$each: ['English', "Latin"]}
+  }}
+  )
+  ```
+
   - Array এর মধ্যে multiple element set করার জন্য `$each` operator use করতে হয়।
 
 - Operator -> `$push`
 
-  - `db.test.updateOne(
-{_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$push: {
-    languages: {$each: ['English', "Latin"]}
-}}
-)`
+  ```db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065")},
+  {$push: {
+      languages: {$each: ['English', "Latin"]}
+  }}
+  )
+  ```
+
   - Array এর duplicate element add করতে হলে `$push` operator use করতে হবে। ফলে element exist করুক না করুক element add করে দিবে।
-  -
 
 - Operator -> `$unset`
 
-  - `db.test.updateOne(
-{_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$unset: {age: ''}}
-)`
+  ```db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065")},
+  {$unset: {age: ''}}
+  )
+  ```
+
   - কোনো field কে remove করে দেওয়ার জন্য `$unset` operator use করা হয়।
 
 - Operator -> `$pop`
 
-  - `db.test.updateOne(
- {_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$pop: {languages: -1}}
- )`
+  ```
+  db.test.updateOne(
+  {_id: ObjectId("6406ad63fc13ae5a40000065")},
+  {$pop: {languages: -1}}
+  )
+  ```
+
   - array field এর প্রথম অথবা শেষ element কে remove করা জন্য `$pop` operator use করা হয়। প্রথম element হলে -1, শেষ element হলে 1.
 
 - Operator -> `$pull`
 
-  - `db.test.updateOne(
+  ```
+  db.test.updateOne(
   {_id: ObjectId("6406ad63fc13ae5a40000065")},
-{$pull: {languages:"English"}}
-  )`
+  {$pull: {languages:"English"}}
+  )
+  ```
+
   - array field থেকে specific একটা element কে remove করতে চাইলে `pull` operator ব্যবহার করতে হবে।
 
 - Operator -> `$pullAll`
-  - db.test.updateOne(
-    {\_id: ObjectId("6406ad63fc13ae5a40000065")},
+
+  ```
+  db.test.updateOne(
+    {_id: ObjectId("6406ad63fc13ae5a40000065")},
     {$pullAll: {languages: ["Latin", "Thai"]}}
     )
+  ```
+
   - array field থেকে multiple element remove করতে চাইলে `$pullAll` operator use করতে হবে।
 
 ## Aggrigation Pipeline Operator
 
 - Operator -> `$match`
 
-  - `db.test.aggregate([
-{$match: {age: {$gte: 30}, gender: "Male"}}, 
-{$project: {age: 1, gender: 1, name: 1, }}
-])`
+  ```
+  db.test.aggregate([
+  {$match: {age: {$gte: 30}, gender: "Male"}},
+  {$project: {age: 1, gender: 1, name: 1, }}
+  ])
+  ```
+
   - `$match` operator হলো find operator এর মতো। কিন্তু $match stage আকারে কাজ করে।
 
 - Operator -> `$project`
 
-  - `db.test.aggregate([
-{$match: {age: {$gte: 30}, gender: "Male"}}, 
-{$project: {age: 1, gender: 1, name: 1, }}
-])`
+  ```
+  db.test.aggregate([
+  {$match: {age: {$gte: 30}, gender: "Male"}},
+  {$project: {age: 1, gender: 1, name: 1, }}
+  ])
+  ```
+
   - `$project` operator project method এর মতো কাজ করে কিন্তু aggregation এর মধ্যে এটি stage আকারে কাজ করে।
 
 - Operator -> `$addField`
 
-  - `db.test.aggregate([
-{$addFields: {course: "Level 2"}},
-])`
+  ```
+  db.test.aggregate([
+  {$addFields: {course: "Level 2"}},
+  ])
+  ```
+
   - এই operator use করে pipeline এর প্রতিটা data এর মধ্যে field add করা যায়। কিন্তু শুধু `$addField` দিয়ে collection এর মধ্যে data কে modifiy করা যায় না। এটা শুধু pipleline এর data এর মধ্যে field add হবে। যদি collection এর মধ্যে data কে modify করতে হয়। তাহলে `$marge` operator use করতে হবে। এবং pipeline এর data গুলো দিয়ে আলাদা collection তৈরী করতে হয় তাহলে `$out` operator use করতে হবে।
 
 - Operator -> `$merge`
 
-  - `db.test.aggregate([
-{$addFields: {course: "Level 2"}},
-{$merge: "test"}
-])`
+  ```db.test.aggregate([
+  {$addFields: {course: "Level 2"}},
+  {$merge: "test"}
+  ])
+  ```
+
   - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$merge` operator use করে, test collection এর সাথে pipeline এর data merge করে দেয়া হয়েছে।
 
 - Operator -> `$out`
 
-  - `db.test.aggregate([
-{$addFields: {course: "Level 2"}},
-{$out: "pipeline_collection"}
-])`
+  ```db.test.aggregate([
+  {$addFields: {course: "Level 2"}},
+  {$out: "pipeline_collection"}
+  ])
+  ```
+
   - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$out` operator দিয়ে new collection তৈরী হয়ে যাবে।
 
 - Operator -> `$group`
 
-  - `db.test.aggregate([
-{ $group: 
-{ _id: "$address.country", 
-count: {$sum: 1}, 
-users: {$push: '$$ROOT'}
-}
-},
-])`
+  ```
+    db.test.aggregate([
+  { $group:{
+  _id: "$address.country",
+  count: {$sum: 1},
+  users: {$push: '$$ROOT'}
+  }}
+  ])
+  ```
 
   - `$group` operator stage তৈরী করে all document এর মধ্যে group করা যায়। `_id` দিয়ে একটি field declare করতে হবে, ঐ id এর উপর ভিত্তি করে documnet গুলো group হয়ে যাবে।
   - `$group` operator এর মধ্যে কিছু accoumulator operator use করা হয় যেমন: `$sum`, `$count`, `$push`,
@@ -275,15 +367,17 @@ users: {$push: '$$ROOT'}
   - `$sum` দিয়ে প্রতিটা group এ কত গুলো data আছে তা যোগ করে count করা যায়।
   - `$push` operator দিয়ে group এ কোন field show করবে তা push করা যায়। `{$push: '$$ROOT'}` group wise সকল data গুলো ‍show করবে। কিন্তু নির্দিষ্ট কিছু field show করাতে হলে `$project` stage use করতে হবে।
 
-  - `db.test.aggregate([
+  ```
+  db.test.aggregate([
   {$group: {
-      _id: null, 
-      totalSalary: {$sum: '$salary'}, 
+      _id: null,
+      totalSalary: {$sum: '$salary'},
       minSalary: {$min: "$salary"},
       maxSalary: {$max: "$salary"},
       avgSalary: {$avg: "$salary"}
   }},
-])`
+  ])
+  ```
 
 - `$group` operator এর আরেকটি ব্যবহার হলো `_id: null` দেয়া হয় তাহলে collection এর সকল document কে পাবে। এখানে accoumulator operator
 
@@ -295,49 +389,68 @@ users: {$push: '$$ROOT'}
 
 - Operator -> `$project`
 
-  - `db.test.aggregate([
-{ $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}}, 
- {$project: {'users.name': 1, 'users.age': 1, 'users.gender':1}}
-    ])`
-  - এখানে country group এর users এর data গুলোর মধ্যে ‍ specific ৩টা field এর data show করবে।
-  -
-
-```
+  ```
   db.test.aggregate([
-    {$group: {
-        _id: null,
-        totalSalary: {$sum: '$salary'},
-        minSalary: {$min: "$salary"},
-        maxSalary: {$max: "$salary"},
-        avgSalary: {$avg: "$salary"}
+  { $group: {
+    _id: "$address.country",
+    count: {$sum: 1},
+    users: {$push: '$$ROOT'}
     }},
-    {$project: {
-    total: "$totalSalary",
-        minSalary: 1,
-        max: "$maxSalary",
-    avgerage: "$avgSalary",
-        differenceMinMax: {$subtract: ["$maxSalary", "$minSalary"]}
-    }},
+  {$project: {
+    'users.name': 1,
+    'users.age': 1,
+    'users.gender':1}}
     ])
-```
+  ```
 
-    - `$project` operator এর আরেকটি ব্যবহার হলো new field দিয়ে আগের field এ `$fieldName` ব্যবহার করে declare করতে হয়। তাহলে পূর্বের value new field এ বসে যাবে।
-    - `$substract` use করে একটি field থেকে আরেকটি field কে বিয়োর করা হয়েছে।
+  - এখানে country group এর users এর data গুলোর মধ্যে ‍ specific ৩টা field এর data show করবে।
+
+  ```
+    db.test.aggregate([
+      {$group: {
+          _id: null,
+          totalSalary: {$sum: '$salary'},
+          minSalary: {$min: "$salary"},
+          maxSalary: {$max: "$salary"},
+          avgSalary: {$avg: "$salary"}
+      }},
+      {$project: {
+      total: "$totalSalary",
+          minSalary: 1,
+          max: "$maxSalary",
+      avgerage: "$avgSalary",
+          differenceMinMax: {$subtract: ["$maxSalary", "$minSalary"]}
+      }},
+      ])
+  ```
+
+  - `$project` operator এর আরেকটি ব্যবহার হলো new field দিয়ে আগের field এ `$fieldName` ব্যবহার করে declare করতে হয়। তাহলে পূর্বের value new field এ বসে যাবে।
+  - `$substract` use করে একটি field থেকে আরেকটি field কে বিয়োর করা হয়েছে।
 
 - Operator -> `$unwind`
 
-  - db.test.aggregate([
+  ```
+   db.test.aggregate([
     { $unwind: "$friends" },
     { $group: { _id: "$friends", count: {$sum: 1} } }
-    ])`
+    ])
+  ```
 
   - `$unwind` operator use করে array এর প্রতিটি element কে single element এ রুপান্তর করা হয়। প্রতিটা element নিয়ে আলাদা আলাদা object create হয়।
   - যেমন: `[{id: 1, friend: [a,b,c]}]` -> `[{id: 1, friend: a}, {id: 1, friend: b}, {id: 1, friend:c}]`
   - এখন group করতে চাইলে ‍single element এর উপর group করা যাবে।
-  - `db.test.aggregate([
+
+  ```
+  db.test.aggregate([
     {$unwind: '$interests'},
-   {$group: {_id: "$age", interest: {$push: "$interests"}}}
-])`
+   {$group: {
+    _id: "$age",
+    interest: {$push: "$interests"}
+    }
+   }
+  ])
+  ```
+
   - এখানে interests array field কে break করে single elemet এ রুপান্তর করা হয়েছে এবং age এর উপর ভিত্তি করে group করে, প্রতিটি age এর interest গুলো `$push` operator দিয়ে add করে দেয়া হয়েছে।
 
 - Operator -> `$bucket`
