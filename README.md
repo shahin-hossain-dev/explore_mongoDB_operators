@@ -259,21 +259,77 @@
   - এখানে test collection এর সকল object data গুলোর মধ্যে course field add করে `$out` operator দিয়ে new collection তৈরী হয়ে যাবে।
 
 - Operator -> `$group`
+
   - `db.test.aggregate([
 
-{ $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}},
+  { $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}},
 
-    ])`
+                                            ])`
 
-- `$group` operator stage তৈরী করে all document এর মধ্যে group করা যায়। `_id` দিয়ে একটি field declare করতে হবে, ঐ id এর উপর ভিত্তি করে documnet গুলো group হয়ে যাবে।
-- `$group` operator এর মধ্যে কিছু accoumulator operator use করা হয় যেমন: `$sum`, `$count`, `$push`,
+  - `$group` operator stage তৈরী করে all document এর মধ্যে group করা যায়। `_id` দিয়ে একটি field declare করতে হবে, ঐ id এর উপর ভিত্তি করে documnet গুলো group হয়ে যাবে।
+  - `$group` operator এর মধ্যে কিছু accoumulator operator use করা হয় যেমন: `$sum`, `$count`, `$push`,
 
   - `$sum` দিয়ে প্রতিটা group এ কত গুলো data আছে তা যোগ করে count করা যায়।
   - `$push` operator দিয়ে group এ কোন field show করবে তা push করা যায়। `{$push: '$$ROOT'}` group wise সকল data গুলো ‍show করবে। কিন্তু নির্দিষ্ট কিছু field show করাতে হলে `$project` stage use করতে হবে।
 
+  - `db.test.aggregate([
+  {$group: {
+      _id: null, 
+      totalSalary: {$sum: '$salary'}, 
+      minSalary: {$min: "$salary"},
+      maxSalary: {$max: "$salary"},
+      avgSalary: {$avg: "$salary"}
+  }},
+])`
+
+- `$group` operator এর আরেকটি ব্যবহার হলো `_id: null` দেয়া হয় তাহলে collection এর সকল document কে পাবে। এখানে accoumulator operator
+
+  - `$sum` দিয়ে সকল‍ salary field কে যোগ করা হয়েছে।
+  - `$mim` দিয়ে সব গুলোর মধ্যে minimum salary বের করা হয়েছে।
+  - `max` দিয়ে maximum salary বের করা হয়েছে।
+  - `avg` দিয়ে average salary বের করা হয়েছে।
+    এবং field গুলোকে operation করে নতুন field এ রাখা হচ্ছে।
+
 - Operator -> `$project`
+
   - `db.test.aggregate([
 { $group: { _id: "$address.country", count: {$sum: 1}, users: {$push: '$$ROOT'}}}, 
  {$project: {'users.name': 1, 'users.age': 1, 'users.gender':1}}
     ])`
   - এখানে country group এর users এর data গুলোর মধ্যে ‍ specific ৩টা field এর data show করবে।
+  - `db.test.aggregate([
+
+    {$group: {
+        _id: null, 
+        totalSalary: {$sum: '$salary'}, 
+        minSalary: {$min: "$salary"},
+        maxSalary: {$max: "$salary"},
+        avgSalary: {$avg: "$salary"}
+    }},
+    {$project: {
+    total: "$totalSalary",
+        minSalary: 1, 
+        max: "$maxSalary",
+    avgerage: "$avgSalary",
+        differenceMinMax: {$subtract: ["$maxSalary", "$minSalary"]}
+    }},
+    ])`
+
+    - `$project` operator এর আরেকটি ব্যবহার হলো new field দিয়ে আগের field এ `$fieldName` ব্যবহার করে declare করতে হয়। তাহলে পূর্বের value new field এ বসে যাবে।
+    - `$substract` use করে একটি field থেকে আরেকটি field কে বিয়োর করা হয়েছে।
+
+- Operator -> `$unwind`
+
+  - `db.test.aggregate([
+{ $unwind: "$friends" },
+{ $group: { _id: "$friends", count: {$sum: 1} } }
+])`
+
+  - `$unwind` operator use করে array এর প্রতিটি element কে single element এ রুপান্তর করা হয়। প্রতিটা element নিয়ে আলাদা আলাদা object create হয়।
+  - যেমন: `[{id: 1, friend: [a,b,c]}]` -> `[{id: 1, friend: 1}, {id: 1, friend: b}, {id: 1, friend:c}]`
+  - এখন group করতে চাইলে ‍single element এর উপর group করা যাবে।
+  - `db.test.aggregate([
+    {$unwind: '$interests'},
+   {$group: {_id: "$age", interest: {$push: "$interests"}}}
+])`
+  - এখানে interests array field কে break করে single elemet এ রুপান্তর করা হয়েছে এবং age এর উপর ভিত্তি করে group করে, প্রতিটি age এর interest গুলো `$push` operator দিয়ে add করে দেয়া হয়েছে।
