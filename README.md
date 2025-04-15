@@ -490,4 +490,41 @@
   - `$sort` stage এ field এর উপর ভিত্তি করে sort করা যায়।
 
 - Operator -> `$limit`
+
   - `$limit` stage এ document গুলোকে limit করে পাওয়া যায়। এবং সব সময় `$sort` stage এর পরে করতে হবে।
+
+- Operator -> `$facet`
+
+  ```
+  db.test.aggregate([
+
+      {
+          $facet: {
+              //pipeline-1
+              "friendsCount": [
+                  //stage-1
+                  { $unwind: '$friends' },
+                  //stage-2
+                  { $group: { _id: '$friends', count: { $sum: 1 } } }
+              ],
+              //pipeline-2
+              "skillsCount": [
+                  //stage-1
+                  { $unwind: "$skills" },
+                  //stage-2
+                  { $group: { _id: "$skills", count: { $sum: 1 } } }
+              ],
+              //pipeline-3
+              "interestsCount": [
+                  //stage-1
+                  {$unwind: "$interests"},
+                  //stage-2
+                  {$group: {_id: '$interests', count: {$sum: 1} }}
+              ]
+          }
+      }
+
+  ])
+  ```
+
+  - `$facet` operator use করে same collecdtion এর উপর একই সময়ে multiple pipeline create করা যায়। এবং প্রতিটা pipeline আলাদা আলাদা output generate করে। প্রতিটা pipeline এর আলাদা আলাদা নাম থাকবে এবং pipeline গুলো মধ্যে multiple stage create করা যাবে।
