@@ -527,4 +527,26 @@
   ])
   ```
 
-  - `$facet` operator use করে same collecdtion এর উপর একই সময়ে multiple pipeline create করা যায়। এবং প্রতিটা pipeline আলাদা আলাদা output generate করে। প্রতিটা pipeline এর আলাদা আলাদা নাম থাকবে এবং pipeline গুলো মধ্যে multiple stage create করা যাবে।
+  - `$facet` operator use করে same collection এর উপর একই সময়ে multiple pipeline create করা যায়। এবং প্রতিটা pipeline আলাদা আলাদা output generate করে। প্রতিটা pipeline এর আলাদা আলাদা নাম থাকবে এবং pipeline গুলো মধ্যে multiple stage create করা যাবে।
+
+  - Operator -> `$lookup`
+
+    ```
+    db.orders.aggregate([
+
+      {
+          $lookup: {
+              from: 'test',
+              localField: 'userId',
+              foreignField: '_id',
+              as: 'user'
+          }
+      }
+    ])
+    ```
+
+    - `$lookup` operator use করে অন্য collection থেকে referencing এর মাধ্যমে data নিয়ে আসা যায়। অন্য collection একটি ref id এই collection এ রাখা হয় এবং সেই ref Id ধরে data কে নিয়ে আশাই হলো referencing. `$lookup` operato ৪টা প্রপাটির উপর ভিত্তি করে data নিয়ে আসে
+      - from: collectionName দিতে হয়
+      - localField: এই collection এ reference property কি নামে আছে।
+      - foreign: যে collection থেকে data আনা হবে সেখানে property কি নামে আছে।
+      - as: কি নামের property তে data গুলো রাখা হবে।
