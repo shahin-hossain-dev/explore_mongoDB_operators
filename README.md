@@ -529,24 +529,45 @@
 
   - `$facet` operator use করে same collection এর উপর একই সময়ে multiple pipeline create করা যায়। এবং প্রতিটা pipeline আলাদা আলাদা output generate করে। প্রতিটা pipeline এর আলাদা আলাদা নাম থাকবে এবং pipeline গুলো মধ্যে multiple stage create করা যাবে।
 
-  - Operator -> `$lookup`
+- Operator -> `$lookup`
 
-    ```
-    db.orders.aggregate([
+  ```
+  db.orders.aggregate([
 
-      {
-          $lookup: {
-              from: 'test',
-              localField: 'userId',
-              foreignField: '_id',
-              as: 'user'
-          }
-      }
-    ])
-    ```
+    {
+        $lookup: {
+            from: 'test',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user'
+        }
+    }
+  ])
+  ```
 
-    - `$lookup` operator use করে অন্য collection থেকে referencing এর মাধ্যমে data নিয়ে আসা যায়। অন্য collection একটি ref id এই collection এ রাখা হয় এবং সেই ref Id ধরে data কে নিয়ে আশাই হলো referencing. `$lookup` operato ৪টা প্রপাটির উপর ভিত্তি করে data নিয়ে আসে
-      - from: collectionName দিতে হয়
-      - localField: এই collection এ reference property কি নামে আছে।
-      - foreign: যে collection থেকে data আনা হবে সেখানে property কি নামে আছে।
-      - as: কি নামের property তে data গুলো রাখা হবে।
+  - `$lookup` operator use করে অন্য collection থেকে referencing এর মাধ্যমে data নিয়ে আসা যায়। অন্য collection একটি ref id এই collection এ রাখা হয় এবং সেই ref Id ধরে data কে নিয়ে আশাই হলো referencing. `$lookup` operato ৪টা প্রপাটির উপর ভিত্তি করে data নিয়ে আসে
+    - from: collectionName দিতে হয়
+    - localField: এই collection এ reference property কি নামে আছে।
+    - foreign: যে collection থেকে data আনা হবে সেখানে property কি নামে আছে।
+    - as: কি নামের property তে data গুলো রাখা হবে।
+
+## MongoDB Indexing
+
+- Indexing কি?
+  - collection এর মধ্যে কোনো নির্দিষ্ট property বা filed কে index বা reference করে রাখা। যাতে ঐ index বা reference ধরে সরাসরি ঐ property এর সম্পূর্ণ document কে access বা খুজে বের করতে পারে।
+
+### CollScan vs IXScan
+
+- CallScan হলো যখন collection এর মধ্যে কোনো data specific property দিয়ে find করা হয়। তখন document line by line read করে data return করে এ ক্ষেত্রে অনেক সংখক data হলে execution time বেড়ে যায়। এতে user experience ব্যহত হয়।
+
+- IXScan হলো যখন collection এর মধ্যে কোনো data specific property দিয়ে find করা হয়। তখন document line by line read না করে, memory তে specific property index করে রাখে, এতে index reference ধরে সরাসরি data পাওয়া যায়। এবং এত execution time অনেক fast হয়।
+
+কিন্তু, IXScan যেহেতু memory consume করে সেক্ষেত্রে শুধু মাত্র যেখানে indexing করতে হবে। ছোট dataset এর উপর indexing এর প্রয়োজন নেই। যদি execution time 10ms এর উপরে যায় তখনই indexing এর প্রয়োজন হয়।
+
+- MongoDB তে কিভাবে execution stats বের করা যায়
+
+  - `db.massive_data.find({email : "gofffrye@flexigen.com"}).explain('executionStats')`
+
+- Create Index in MongoDB
+  - `db.massive_data.createIndex({email : 1})` or
+  - `db.getCollection('massive_data').createIndex({email: 1})`
