@@ -571,3 +571,19 @@
 - Create Index in MongoDB
   - `db.massive_data.createIndex({email : 1})` or
   - `db.getCollection('massive_data').createIndex({email: 1})`
+- Detele index
+
+  - `db.getCollection('massive_data').dropIndex({email: 1})`
+
+- Compound Index
+
+  - যদি একের অধিক field ধরে indexing করা হয় তাহলে তাকে বলে compound indexing.
+  - delte compund index `db.massive_data.dropIndex("gender_-1_age_1")`
+
+- Text Index
+  - কোনো property এর মধ্যে যদি নির্দিষ্ট text এর উপর ভিত্তি করে search করে data পেতে হয় তাহলে এটা effeicent বা faster করার জন্য text index use করতে হয়ে। তাহলে অল্প সময়ে search result পাওয়া যায়।
+  - create text index: `db.massive_data.createIndex({about: "text"})`
+  - about এর value text দেওয়ার কারণে এটা text index হয়ে গেছে।
+  - search text index data:
+    - `db.massive_data.find({$text: {$search: "dolor"}})`
+    - এভাবে text index data search/query করতে হয়।
